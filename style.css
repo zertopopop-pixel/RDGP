@@ -1,0 +1,27 @@
+:root{
+  --bg:#05070b; --fg:#bfe9ff; --muted:#7aa6c7;
+  --neon:#00e1ff; --accent:#00ffa6; --panel:#08101a; --border:#1b324d;
+}
+html,body,#app{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
+#map{height:100%;width:100%;}
+
+/* HUD */
+#hud{pointer-events:auto}
+.badge{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 12px;border-radius:12px;background:rgba(8,16,26,0.75);border:1px solid var(--border);min-width:120px}
+.badge small{color:var(--muted);font-size:12px}
+
+/* Recenter button */
+#recenterBtn{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,rgba(0,225,255,.14),rgba(0,255,166,.06));border:1px solid var(--border);color:var(--neon);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#recenterBtn.show{display:flex}
+
+/* Suggestions */
+.suggestions-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--panel);border:1px solid var(--border);border-radius:8px;max-height:220px;overflow:auto;z-index:1100}
+.suggestion-item{padding:8px 12px;color:var(--fg);cursor:pointer}
+
+/* Map overlay elements: minimize animations */
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important;animation:none!important}
+}
+
+/* Lite route styling (rendered via canvas/polyline) */
+.route-main{pointer-events:none}
