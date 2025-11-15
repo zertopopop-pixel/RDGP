@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>GPS Radar FR — Néon (Optimisé)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+
+  <!-- Ton CSS (on le gardera mais on évite certains transforms sur #map ici) -->
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* Minimal reset for map container to avoid forced oversize/transform */
+    html, body {
+      height: 100%;
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background: #05070b;
+      color: #bfe9ff;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    /* MAP: use fixed full-viewport, no oversized 150% trick */
+    #map {
+      position: fixed;
+      inset: 0;                 /* top:0; right:0; bottom:0; left:0; */
+      width: 100%;
+      height: 100%;
+      touch-action: manipulation; /* let leaflet handle gestures */
+      will-change: transform;     /* hint only, don't force extra layers */
+      backface-visibility: hidden;
+      transform-origin: center center;
+      /* remove transitions here: rotation will be driven only by JS (requestAnimationFrame) */
+      transition: none !important;
+      z-index: 0;
+    }
+
+    /* HUD wrapper sits above map and uses pointer-events normally */
+    #hud {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      z-index: 1000;
+      display: grid;
+      gap: 10px;
+      pointer-events: auto;
+    }
+
+    /* Recenter button: simple and centered bottom */
+    #recenterBtn {
+      position: fixed;
+      left: 50%;
+      bottom: 80px;
+      transform: translateX(-50%);
+      z-index: 1001;
+      display: none;
+    }
+    #recenterBtn.show { display:flex; }
+
+    /* keep interactive elements high z-index but lightweight */
+    .ui-btn { -webkit-tap-highlight-color: rgba(0,0,0,0.05); }
+
+    /* Accessibility: prefer-reduced-motion respects system */
+    @media (prefers-reduced-motion: reduce) {
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="map" aria-label="Carte"></div>
+
+  <!-- HUD (minimal structure; le reste est injecté par ton CSS/JS existants) -->
+  <div id="hud" role="region" aria-live="polite">
+    <div id="search-bar-top" style="display:flex; gap:8px;">
+      <div style="flex:1; position:relative;">
+        <input id="dest" placeholder="🔍 Rechercher..." aria-label="Recherche destination" style="width:100%; padding:10px 12px; border-radius:20px; border:1px solid rgba(27,50,77,0.5); background:rgba(8,16,26,0.75); color:inherit;">
+        <div id="suggestions" class="suggestions-dropdown" style="display:none;"></div>
+      </div>
+      <button id="go" class="ui-btn" aria-label="Lancer recherche" style="padding:10px 14px; border-radius:12px;">→</button>
+    </div>
+  </div>
+
+  <button id="recenterBtn" aria-label="Recentrer" title="Recentrer">📍</button>
+
+  <!-- Leaflet JS + optional plugins (deferred) -->
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js" crossorigin="anonymous"></script>
+
+  <!-- Ton script principal (défère l'exécution après le parsing) -->
+  <script defer src="script.js"></script>
+
+  <!-- Petit snippet pour forcer l'initialisation Leaflet après le chargement complet des ressources -->
+  <script>
+    window.addEventListener('load', () => {
+      // Si ton script.js expose une initialisation explicite, appelle-la ici.
+      // Exemple : if (typeof initApp === 'function') initApp();
+      // Ici on se contente d'un message pour confirmer le chargement.
+      console.log('Index (optimisé) chargé — Leaflet et script.js sont différés pour éviter le jank.');
+    });
+  </script>
+</body>
+</html>
